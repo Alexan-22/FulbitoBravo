@@ -1,0 +1,30 @@
+using Microsoft.AspNetCore.Mvc;
+using FulbitoBravo.Data;
+using FulbitoBravo.Models;
+
+namespace FulbitoBravo.Controllers;
+
+public class CanchaController : Controller
+{
+    private readonly CanchaRepositorio _repo;
+
+    public CanchaController(CanchaRepositorio repo) => _repo = repo;
+
+    public IActionResult Index()
+    {
+        var canchas = _repo.Listar();
+        return View(canchas);
+    }
+
+    [HttpGet]
+    public IActionResult Registrar() => View();
+
+    [HttpPost]
+    public IActionResult Registrar(CanchaViewModel modelo)
+    {
+        if (!ModelState.IsValid) return View(modelo);
+        _repo.Insertar(modelo);
+        TempData["Mensaje"] = $"Cancha '{modelo.Nombre}' registrada exitosamente.";
+        return RedirectToAction("Index");
+    }
+}

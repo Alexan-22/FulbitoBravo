@@ -1,0 +1,15 @@
+﻿@{
+    ViewData["Title"] = "Página Principal";
+}
+
+<div class="text-center mt-5">
+    <h1 class="display-4">Bienvenido a FulbitoBravo</h1>
+    <p class="lead">Sistema de gestión y reservas para complejos deportivos de fulbito.</p>
+    <hr class="my-4">
+    <p>Utiliza la barra de navegación superior para acceder rápidamente a los módulos de Clientes, Canchas, Horarios, Reservas y Pagos.</p>
+    
+    <div class="mt-4">
+        <a class="btn btn-primary btn-lg me-2" asp-controller="Reserva" asp-action="Index">Ver Reservas</a>
+        <a class="btn btn-success btn-lg" asp-controller="Cliente" asp-action="Index">Gestionar Clientes</a>
+    </div>
+</div>
