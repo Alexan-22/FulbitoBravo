@@ -1,16 +1,21 @@
 using FulbitoBravo.Data;
+using FulbitoBravo.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-// Registrar la cadena de conexión y todos los repositorios
+// 1. Singleton para la clase de conexión a BD
 builder.Services.AddSingleton<ConexionBD>();
+
+// 2. Inyección de Dependencias usando Interfaz
+builder.Services.AddScoped<IReservaRepositorio, ReservaRepositorio>();
+
+// 3. Demás repositorios del sistema
 builder.Services.AddScoped<ClienteRepositorio>();
 builder.Services.AddScoped<CanchaRepositorio>();
 builder.Services.AddScoped<HorarioRepositorio>();
-builder.Services.AddScoped<ReservaRepositorio>();
 builder.Services.AddScoped<PagoRepositorio>();
 
 var app = builder.Build();
@@ -31,6 +36,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Cliente}/{action=Index}/{id?}");
 
 app.Run();
