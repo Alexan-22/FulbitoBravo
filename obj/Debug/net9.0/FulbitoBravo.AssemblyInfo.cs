@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FulbitoBravo")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+06bb2f23c0b5a3fd3c4c5f1667507e498ae4fe5e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+96806b1ba5610ac989c6b5d87f54c9236d257a25")]
 [assembly: System.Reflection.AssemblyProductAttribute("FulbitoBravo")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FulbitoBravo")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
