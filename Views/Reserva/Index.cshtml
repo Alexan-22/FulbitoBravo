@@ -2,11 +2,14 @@
 
 @{
     ViewData["Title"] = "Listado de Reservas";
+    int paginaActual = ViewBag.PaginaActual ?? 1;
+    int totalPaginas = ViewBag.TotalPaginas ?? 1;
 }
 
 <div class="container mt-4">
     <h2>Listado de Reservas</h2>
 
+    @* Mensaje de éxito *@
     @if (TempData["Mensaje"] != null)
     {
         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -19,7 +22,7 @@
         <a asp-action="Registrar" class="btn btn-success">Nueva Reserva</a>
     </div>
 
-    <table class="table table-striped table-bordered">
+    <table class="table table-striped table-bordered table-hover">
         <thead class="table-dark">
             <tr>
                 <th>Id</th>
@@ -31,17 +34,74 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model)
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.IdReserva</td>
+                        <td>@item.NombreCliente</td>
+                        <td>@item.NombreCancha</td>
+                        <td>@item.FechaReserva.ToString("dd/MM/yyyy")</td>
+                        <td>@item.HorarioTexto</td>
+                        <td>
+                            @if (item.EstadoReserva == "Confirmada")
+                            {
+                                <span class="badge bg-success">@item.EstadoReserva</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">@item.EstadoReserva</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+            else
             {
                 <tr>
-                    <td>@item.IdReserva</td>
-                    <td>@item.NombreCliente</td>
-                    <td>@item.NombreCancha</td>
-                    <td>@item.FechaReserva.ToString("dd/MM/yyyy")</td>
-                    <td>@item.HorarioTexto</td>
-                    <td>@item.EstadoReserva</td>
+                    <td colspan="6" class="text-center text-muted">No se encontraron reservas.</td>
                 </tr>
             }
         </tbody>
     </table>
+
+    @* ====== CONTROLES DE PAGINACIÓN ====== *@
+    @if (totalPaginas > 1)
+    {
+        <nav aria-label="Paginación de reservas">
+            <ul class="pagination justify-content-center">
+
+                @* Botón Anterior *@
+                <li class="page-item @(paginaActual <= 1 ? "disabled" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-pagina="@(paginaActual - 1)">
+                        Anterior
+                    </a>
+                </li>
+
+                @* Números de página *@
+                @for (int i = 1; i <= totalPaginas; i++)
+                {
+                    <li class="page-item @(i == paginaActual ? "active" : "")">
+                        <a class="page-link" asp-action="Index" asp-route-pagina="@i">
+                            @i
+                        </a>
+                    </li>
+                }
+
+                @* Botón Siguiente *@
+                <li class="page-item @(paginaActual >= totalPaginas ? "disabled" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-pagina="@(paginaActual + 1)">
+                        Siguiente
+                    </a>
+                </li>
+
+            </ul>
+        </nav>
+
+        <p class="text-center text-muted">
+            Página @paginaActual de @totalPaginas 
+            (Total: @ViewBag.TotalRegistros registros)
+        </p>
+    }
 </div>

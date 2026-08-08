@@ -1,76 +1,51 @@
-using Microsoft.Data.SqlClient;
+using Microsoft.AspNetCore.Mvc;
+using FulbitoBravo.Data;
 using FulbitoBravo.Models;
 
-namespace FulbitoBravo.Data;
+namespace FulbitoBravo.Controllers;
 
-public class ClienteRepositorio
+public class ClienteController : Controller
 {
-    private readonly ConexionBD _conexion;
+    private readonly ClienteRepositorio _repo;
 
-    public ClienteRepositorio(ConexionBD conexion)
+    public ClienteController(ClienteRepositorio repo)
     {
-        _conexion = conexion;
+        _repo = repo;
     }
 
-    public List<ClienteViewModel> Listar(string? buscar)
+    public IActionResult Index(string? buscar, int pagina = 1)
     {
-        var lista = new List<ClienteViewModel>();
-        var cadena = _conexion.ObtenerCadenaSQL();
+        int tamanoPagina = 3; // para probar
+        int totalRegistros;
 
-        using (var cn = new SqlConnection(cadena))
-        {
-            cn.Open();
-            string query = "SELECT IdCliente, Nombre, Apellido, Telefono, Correo FROM Cliente";
+        var clientes = _repo.ListarPaginado(buscar, pagina, tamanoPagina, out totalRegistros);
 
-            if (!string.IsNullOrEmpty(buscar))
-            {
-                query += " WHERE Nombre LIKE @Buscar OR Apellido LIKE @Buscar";
-            }
+        // Datos que necesita la vista para la paginación
+        ViewBag.Buscar = buscar;
+        ViewBag.PaginaActual = pagina;
+        ViewBag.TotalRegistros = totalRegistros;
+        ViewBag.TamanoPagina = tamanoPagina;
+        ViewBag.TotalPaginas = (int)Math.Ceiling((double)totalRegistros / tamanoPagina);
 
-            using (var cmd = new SqlCommand(query, cn))
-            {
-                if (!string.IsNullOrEmpty(buscar))
-                {
-                    cmd.Parameters.AddWithValue("@Buscar", "%" + buscar + "%");
-                }
-
-                using (var dr = cmd.ExecuteReader())
-                {
-                    while (dr.Read())
-                    {
-                        lista.Add(new ClienteViewModel
-                        {
-                            IdCliente = Convert.ToInt32(dr["IdCliente"]),
-                            Nombre = dr["Nombre"].ToString() ?? "",
-                            Apellido = dr["Apellido"].ToString() ?? "",
-                            Telefono = dr["Telefono"]?.ToString(),
-                            Correo = dr["Correo"]?.ToString()
-                        });
-                    }
-                }
-            }
-        }
-        return lista;
+        return View(clientes);
     }
 
-    public void Insertar(ClienteViewModel modelo)
+    [HttpGet]
+    public IActionResult Registrar()
     {
-        var cadena = _conexion.ObtenerCadenaSQL();
+        return View();
+    }
 
-        using (var cn = new SqlConnection(cadena))
+    [HttpPost]
+    public IActionResult Registrar(ClienteViewModel modelo)
+    {
+        if (!ModelState.IsValid)
         {
-            cn.Open();
-            string query = "INSERT INTO Cliente (Nombre, Apellido, Telefono, Correo) VALUES (@Nombre, @Apellido, @Telefono, @Correo)";
-
-            using (var cmd = new SqlCommand(query, cn))
-            {
-                cmd.Parameters.AddWithValue("@Nombre", modelo.Nombre ?? (object)DBNull.Value);
-                cmd.Parameters.AddWithValue("@Apellido", modelo.Apellido ?? (object)DBNull.Value);
-                cmd.Parameters.AddWithValue("@Telefono", modelo.Telefono ?? (object)DBNull.Value);
-                cmd.Parameters.AddWithValue("@Correo", modelo.Correo ?? (object)DBNull.Value);
-
-                cmd.ExecuteNonQuery();
-            }
+            return View(modelo);
         }
+
+        _repo.Insertar(modelo);
+        TempData["Mensaje"] = "Cliente registrado exitosamente.";
+        return RedirectToAction("Index");
     }
 }

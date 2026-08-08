@@ -12,46 +12,73 @@ public class ReservaRepositorio
         _conexion = conexion;
     }
 
+    // Listado simple (sin paginación) 
     public List<ReservaViewModel> Listar()
     {
+        int total;
+        return ListarPaginado(null, null, 1, 1000, out total);
+    }
+
+    // Listado con paginación y filtro por fechas
+    public List<ReservaViewModel> ListarPaginado(
+        DateTime? fechaInicio, 
+        DateTime? fechaFin, 
+        int pagina, 
+        int tamanoPagina, 
+        out int totalRegistros)
+    {
         var lista = new List<ReservaViewModel>();
+        totalRegistros = 0;
         var cadena = _conexion.ObtenerCadenaSQL();
 
         using (var cn = new SqlConnection(cadena))
         {
             cn.Open();
-            string query = @"
-                SELECT r.IdReserva, r.IdCliente, (c.Nombre + ' ' + c.Apellido) AS NombreCliente,
-                       r.IdCancha, ca.Nombre AS NombreCancha, r.FechaReserva,
-                       r.IdHorario, (CAST(h.HoraInicio AS VARCHAR(5)) + ' - ' + CAST(h.HoraFin AS VARCHAR(5))) AS HorarioTexto,
-                       r.EstadoReserva
-                FROM Reserva r
-                INNER JOIN Cliente c ON r.IdCliente = c.IdCliente
-                INNER JOIN Cancha ca ON r.IdCancha = ca.IdCancha
-                INNER JOIN Horario h ON r.IdHorario = h.IdHorario";
 
-            using (var cmd = new SqlCommand(query, cn))
+            using (var cmd = new SqlCommand("sp_ListarReservasReporte", cn))
             {
+                cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("@FechaInicio", (object?)fechaInicio ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@FechaFin", (object?)fechaFin ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@Pagina", pagina);
+                cmd.Parameters.AddWithValue("@TamanoPagina", tamanoPagina);
+
+                var paramTotal = new SqlParameter("@TotalRegistros", System.Data.SqlDbType.Int)
+                {
+                    Direction = System.Data.ParameterDirection.Output
+                };
+                cmd.Parameters.Add(paramTotal);
+
                 using (var dr = cmd.ExecuteReader())
                 {
                     while (dr.Read())
                     {
+                        var horaInicio = dr["HoraInicio"] != DBNull.Value 
+                            ? ((TimeSpan)dr["HoraInicio"]).ToString(@"hh\:mm") 
+                            : "";
+                        var horaFin = dr["HoraFin"] != DBNull.Value 
+                            ? ((TimeSpan)dr["HoraFin"]).ToString(@"hh\:mm") 
+                            : "";
+
                         lista.Add(new ReservaViewModel
                         {
                             IdReserva = Convert.ToInt32(dr["IdReserva"]),
-                            IdCliente = Convert.ToInt32(dr["IdCliente"]),
-                            NombreCliente = dr["NombreCliente"].ToString(),
-                            IdCancha = Convert.ToInt32(dr["IdCancha"]),
-                            NombreCancha = dr["NombreCancha"].ToString(),
+                            NombreCliente = dr["NombreCliente"]?.ToString(),
+                            NombreCancha = dr["NombreCancha"]?.ToString(),
                             FechaReserva = Convert.ToDateTime(dr["FechaReserva"]),
-                            IdHorario = Convert.ToInt32(dr["IdHorario"]),
-                            HorarioTexto = dr["HorarioTexto"].ToString(),
-                            EstadoReserva = dr["EstadoReserva"].ToString() ?? "Confirmada"
+                            HorarioTexto = $"{horaInicio} - {horaFin}",
+                            EstadoReserva = dr["EstadoReserva"]?.ToString() ?? "Confirmada"
                         });
                     }
                 }
+
+                totalRegistros = paramTotal.Value != DBNull.Value 
+                    ? Convert.ToInt32(paramTotal.Value) 
+                    : 0;
             }
         }
+
         return lista;
     }
 
@@ -71,7 +98,7 @@ public class ReservaRepositorio
                 cmd.Parameters.AddWithValue("@IdCancha", modelo.IdCancha);
                 cmd.Parameters.AddWithValue("@FechaReserva", modelo.FechaReserva);
                 cmd.Parameters.AddWithValue("@IdHorario", modelo.IdHorario);
-                cmd.Parameters.AddWithValue("@EstadoReserva", modelo.EstadoReserva);
+                cmd.Parameters.AddWithValue("@EstadoReserva", modelo.EstadoReserva ?? "Confirmada");
 
                 cmd.ExecuteNonQuery();
             }

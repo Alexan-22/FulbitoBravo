@@ -12,7 +12,11 @@ public class ReservaController : Controller
     private readonly CanchaRepositorio _canchaRepo;
     private readonly HorarioRepositorio _horarioRepo;
 
-    public ReservaController(ReservaRepositorio reservaRepo, ClienteRepositorio clienteRepo, CanchaRepositorio canchaRepo, HorarioRepositorio horarioRepo)
+    public ReservaController(
+        ReservaRepositorio reservaRepo, 
+        ClienteRepositorio clienteRepo, 
+        CanchaRepositorio canchaRepo, 
+        HorarioRepositorio horarioRepo)
     {
         _reservaRepo = reservaRepo;
         _clienteRepo = clienteRepo;
@@ -20,9 +24,19 @@ public class ReservaController : Controller
         _horarioRepo = horarioRepo;
     }
 
-    public IActionResult Index()
+    public IActionResult Index(int pagina = 1)
     {
-        var reservas = _reservaRepo.Listar();
+        int tamanoPagina = 3; // Para probar
+        int totalRegistros;
+
+        // Sin filtro, muchas las fechas mas recientes primero
+        var reservas = _reservaRepo.ListarPaginado(null, null, pagina, tamanoPagina, out totalRegistros);
+
+        ViewBag.PaginaActual = pagina;
+        ViewBag.TotalRegistros = totalRegistros;
+        ViewBag.TamanoPagina = tamanoPagina;
+        ViewBag.TotalPaginas = (int)Math.Ceiling((double)totalRegistros / tamanoPagina);
+
         return View(reservas);
     }
 
