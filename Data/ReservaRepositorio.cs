@@ -68,7 +68,9 @@ public class ReservaRepositorio
                             NombreCancha = dr["NombreCancha"]?.ToString(),
                             FechaReserva = Convert.ToDateTime(dr["FechaReserva"]),
                             HorarioTexto = $"{horaInicio} - {horaFin}",
-                            EstadoReserva = dr["EstadoReserva"]?.ToString() ?? "Confirmada"
+                            EstadoReserva = dr["EstadoReserva"]?.ToString() ?? "Confirmada",
+                            Monto = dr["Monto"] != DBNull.Value ? Convert.ToDecimal(dr["Monto"]) : null,
+                            EstadoPago = dr["EstadoPago"]?.ToString()
                         });
                     }
                 }

@@ -64,4 +64,22 @@ public class ReservaController : Controller
         TempData["Mensaje"] = "Reserva registrada exitosamente.";
         return RedirectToAction("Index");
     }
+    
+    // ========== REPORTE POR RANGO DE FECHAS ==========
+    public IActionResult Reporte(DateTime? fechaInicio, DateTime? fechaFin, int pagina = 1)
+    {
+        int tamanoPagina = 5;
+        int totalRegistros;
+
+        var reservas = _reservaRepo.ListarPaginado(fechaInicio, fechaFin, pagina, tamanoPagina, out totalRegistros);
+
+        ViewBag.FechaInicio = fechaInicio?.ToString("yyyy-MM-dd");
+        ViewBag.FechaFin = fechaFin?.ToString("yyyy-MM-dd");
+        ViewBag.PaginaActual = pagina;
+        ViewBag.TotalRegistros = totalRegistros;
+        ViewBag.TamanoPagina = tamanoPagina;
+        ViewBag.TotalPaginas = (int)Math.Ceiling((double)totalRegistros / tamanoPagina);
+
+        return View(reservas);
+    }
 }

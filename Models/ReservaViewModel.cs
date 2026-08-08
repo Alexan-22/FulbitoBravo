@@ -11,4 +11,8 @@ public class ReservaViewModel
     public int IdHorario { get; set; }
     public string? HorarioTexto { get; set; }
     public string EstadoReserva { get; set; } = "Confirmada";
+
+    // se agrega propiedades
+    public decimal? Monto { get; set; }
+    public string? EstadoPago { get; set; }
 }
