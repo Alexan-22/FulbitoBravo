@@ -1,0 +1,74 @@
+@model FulbitoBravo.Models.ReservaViewModel
+
+@{
+    ViewData["Title"] = "Registrar Reserva";
+}
+
+<div class="page-card">
+    <h2><i class="bi bi-calendar-plus me-2"></i>Registrar Nueva Reserva</h2>
+    <hr />
+
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="Registrar" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                @if (ViewBag.EsAdmin == true)
+                {
+                    <div class="mb-3">
+                        <label asp-for="IdCliente" class="form-label">Cliente</label>
+                        <select asp-for="IdCliente" class="form-control" asp-items="ViewBag.ListaClientes">
+                            <option value="">-- Seleccione Cliente --</option>
+                        </select>
+                        <span asp-validation-for="IdCliente" class="text-danger"></span>
+                    </div>
+                }
+                else
+                {
+                    <input asp-for="IdCliente" type="hidden" />
+                    <div class="alert alert-success py-2">
+                        <i class="bi bi-info-circle me-1"></i> La reserva se registrará a tu nombre.
+                    </div>
+                }
+
+                <div class="mb-3">
+                    <label asp-for="IdCancha" class="form-label">Cancha</label>
+                    <select asp-for="IdCancha" class="form-control" asp-items="ViewBag.ListaCanchas">
+                        <option value="">-- Seleccione Cancha --</option>
+                    </select>
+                    <span asp-validation-for="IdCancha" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="FechaReserva" class="form-label"></label>
+                    <input asp-for="FechaReserva" class="form-control" type="date" />
+                    <span asp-validation-for="FechaReserva" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="IdHorario" class="form-label">Horario</label>
+                    <select asp-for="IdHorario" class="form-control" asp-items="ViewBag.ListaHorarios">
+                        <option value="">-- Seleccione Horario --</option>
+                    </select>
+                    <span asp-validation-for="IdHorario" class="text-danger"></span>
+                </div>
+
+                @if (ViewBag.EsAdmin == true)
+                {
+                    <div class="mb-3">
+                        <label asp-for="EstadoReserva" class="form-label"></label>
+                        <input asp-for="EstadoReserva" class="form-control" value="Confirmada" />
+                        <span asp-validation-for="EstadoReserva" class="text-danger"></span>
+                    </div>
+                }
+                else
+                {
+                    <input type="hidden" asp-for="EstadoReserva" value="Confirmada" />
+                }
+
+                <button type="submit" class="btn btn-primary">Guardar</button>
+                <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+            </form>
+        </div>
+    </div>
+</div>

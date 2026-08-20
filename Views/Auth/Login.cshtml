@@ -1,0 +1,44 @@
+@model FulbitoBravo.Models.Auth.LoginViewModel
+
+@{
+    ViewData["Title"] = "Iniciar sesión";
+}
+
+<div class="fb-auth-wrapper">
+    <div class="fb-auth-card">
+        <div class="fb-auth-icon"><i class="bi bi-shield-lock"></i></div>
+        <h2 class="mb-1">Iniciar sesión</h2>
+        <p class="text-muted mb-4">Accede a tu cuenta de FulbitoBravo.</p>
+
+        <form asp-action="Login" method="post">
+            <input type="hidden" asp-for="ReturnUrl" />
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="mb-3">
+                <label asp-for="Username" class="form-label"></label>
+                <input asp-for="Username" class="form-control" autofocus placeholder="admin" />
+                <span asp-validation-for="Username" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Password" class="form-label"></label>
+                <input asp-for="Password" class="form-control" placeholder="••••••••" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 mt-2">
+                <i class="bi bi-box-arrow-in-right me-1"></i> Ingresar
+            </button>
+        </form>
+
+        <hr class="my-4" />
+        <p class="text-center text-muted mb-0">
+            ¿Aún no tienes cuenta?
+            <a asp-action="Registro">Regístrate como cliente</a>
+        </p>
+    </div>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}
