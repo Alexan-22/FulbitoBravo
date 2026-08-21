@@ -1,7 +1,14 @@
-﻿@{
+﻿@using System.Globalization
+
+@{
     ViewData["Title"] = "Inicio";
     bool autenticado = User.Identity != null && User.Identity.IsAuthenticated;
     bool esAdmin = User.IsInRole("Admin");
+}
+
+@{
+    var zonaPeru = TimeZoneInfo.FindSystemTimeZoneById("SA Pacific Standard Time");
+    var horaPeru = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, zonaPeru);
 }
 
 @if (esAdmin)
@@ -9,8 +16,10 @@
     <div class="mb-4">
         <h2 class="fw-bold mb-1">Panel de Administración</h2>
         <p class="text-muted mb-0">
-            @DateTime.Now.ToString("dddd, dd 'de' MMMM 'de' yyyy · HH:mm")
-        </p>
+            @horaPeru.ToString(
+            "dddd, dd 'de' MMMM 'de' yyyy · HH:mm",
+                new CultureInfo("es-PE"))
+    </p>
     </div>
 
     <div class="row g-3 mb-4">

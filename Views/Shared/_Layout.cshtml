@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="~/FulbitoBravo.styles.css" asp-append-version="true" />
     <link rel="icon" type="image/x-icon" href="~/favicon.ico" asp-append-version="true" />
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark fb-navbar">
             <div class="container-fluid">
@@ -76,7 +76,7 @@
             </div>
         </nav>
     </header>
-    <div class="container">
+    <div class="container flex-grow-1">
         <main role="main" class="fb-main">
             @if (TempData["Mensaje"] != null)
             {
@@ -101,3 +101,5 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+
+

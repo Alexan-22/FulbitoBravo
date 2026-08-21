@@ -419,3 +419,22 @@ main.fb-main {
   text-transform: uppercase;
   letter-spacing: .04em;
 }
+
+html, body {
+    min-height: 100%;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+    body > .container {
+        flex: 1 0 auto;
+    }
+
+.fb-footer {
+    flex-shrink: 0;
+    margin-top: auto;
+}
