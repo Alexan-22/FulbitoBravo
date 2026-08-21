@@ -4,68 +4,168 @@
     bool esAdmin = User.IsInRole("Admin");
 }
 
-<section class="fb-hero mb-5">
-    <div class="row align-items-center">
-        <div class="col-lg-8">
-            <div class="fb-eyebrow">Complejo deportivo · Fulbito 5 vs 5</div>
-            <h1>Reserva tu cancha de grass sintético en minutos</h1>
-            <p class="lead mt-3">
-                Gestiona clientes, canchas, horarios, reservas y pagos desde un solo lugar.
-                Simple para los clientes, completo para el equipo administrativo.
-            </p>
-            <div class="mt-4 d-flex flex-wrap gap-2">
-                @if (!autenticado)
-                {
-                    <a class="btn btn-dorado btn-lg" asp-controller="Auth" asp-action="Registro">
-                        <i class="bi bi-person-plus me-1"></i> Crear cuenta de cliente
-                    </a>
-                    <a class="btn btn-outline-light btn-lg" asp-controller="Auth" asp-action="Login">
-                        <i class="bi bi-box-arrow-in-right me-1"></i> Ya tengo cuenta
-                    </a>
-                }
-                else if (esAdmin)
-                {
-                    <a class="btn btn-dorado btn-lg" asp-controller="Reserva" asp-action="Index">
-                        <i class="bi bi-calendar-check me-1"></i> Ver Reservas
-                    </a>
-                    <a class="btn btn-outline-light btn-lg" asp-controller="Cliente" asp-action="Index">
-                        <i class="bi bi-people me-1"></i> Gestionar Clientes
-                    </a>
-                }
-                else
-                {
-                    <a class="btn btn-dorado btn-lg" asp-controller="Reserva" asp-action="Registrar">
-                        <i class="bi bi-plus-circle me-1"></i> Reservar cancha
-                    </a>
-                    <a class="btn btn-outline-light btn-lg" asp-controller="Reserva" asp-action="MisReservas">
-                        <i class="bi bi-calendar-check me-1"></i> Mis Reservas
-                    </a>
-                }
+@if (esAdmin)
+{
+    <div class="mb-4">
+        <h2 class="fw-bold mb-1">Panel de Administración</h2>
+        <p class="text-muted mb-0">
+            @DateTime.Now.ToString("dddd, dd 'de' MMMM 'de' yyyy · HH:mm")
+        </p>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-success bg-opacity-10 text-success rounded-3 p-3 me-3">
+                            <i class="bi bi-calendar-check fs-4"></i>
+                        </div>
+                        <div>
+                            <div class="text-muted small">Reservas</div>
+                            <div class="fs-5 fw-bold">Gestionar</div>
+                        </div>
+                    </div>
+                    <a asp-controller="Reserva" asp-action="Index" class="stretched-link"></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-primary bg-opacity-10 text-primary rounded-3 p-3 me-3">
+                            <i class="bi bi-geo-alt fs-4"></i>
+                        </div>
+                        <div>
+                            <div class="text-muted small">Canchas</div>
+                            <div class="fs-5 fw-bold">Estado</div>
+                        </div>
+                    </div>
+                    <a asp-controller="Cancha" asp-action="Index" class="stretched-link"></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-warning bg-opacity-10 text-warning rounded-3 p-3 me-3">
+                            <i class="bi bi-people fs-4"></i>
+                        </div>
+                        <div>
+                            <div class="text-muted small">Clientes</div>
+                            <div class="fs-5 fw-bold">Listado</div>
+                        </div>
+                    </div>
+                    <a asp-controller="Cliente" asp-action="Index" class="stretched-link"></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-info bg-opacity-10 text-info rounded-3 p-3 me-3">
+                            <i class="bi bi-cash-coin fs-4"></i>
+                        </div>
+                        <div>
+                            <div class="text-muted small">Pagos</div>
+                            <div class="fs-5 fw-bold">Control</div>
+                        </div>
+                    </div>
+                    <a asp-controller="Pago" asp-action="Index" class="stretched-link"></a>
+                </div>
             </div>
         </div>
     </div>
-</section>
 
-<div class="row g-4">
-    <div class="col-md-4">
-        <div class="fb-feature-card">
-            <div class="fb-icon-circle"><i class="bi bi-geo-alt"></i></div>
-            <h5>Canchas para todo nivel</h5>
-            <p class="text-muted mb-0">Grass sintético FIFA, canchas estándar, junior y una opción VIP con vestidores exclusivos.</p>
+    <div class="row g-3">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="fw-bold mb-3">Accesos rápidos</h5>
+                    <div class="d-flex flex-wrap gap-2">
+                        <a asp-controller="Reserva" asp-action="Index" class="btn btn-success">
+                            <i class="bi bi-calendar-check me-1"></i> Ver Reservas
+                        </a>
+                        <a asp-controller="Cliente" asp-action="Index" class="btn btn-outline-success">
+                            <i class="bi bi-people me-1"></i> Gestionar Clientes
+                        </a>
+                        <a asp-controller="Cancha" asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="bi bi-geo-alt me-1"></i> Ver Canchas
+                        </a>
+                        <a asp-controller="Horario" asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="bi bi-clock me-1"></i> Ver Horarios
+                        </a>
+                        <a asp-controller="Pago" asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="bi bi-cash-coin me-1"></i> Ver Pagos
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="fb-feature-card">
-            <div class="fb-icon-circle"><i class="bi bi-clock-history"></i></div>
-            <h5>Horarios flexibles</h5>
-            <p class="text-muted mb-0">Bloques de mañana y noche, con validación automática para evitar reservas duplicadas.</p>
+}
+else
+{
+    <section class="fb-hero mb-5">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <div class="fb-eyebrow">Complejo deportivo · Fulbito 5 vs 5</div>
+                <h1>Reserva tu cancha de grass sintético en minutos</h1>
+                <p class="lead mt-3">
+                    Gestiona clientes, canchas, horarios, reservas y pagos desde un solo lugar.
+                    Simple para los clientes, completo para el equipo administrativo.
+                </p>
+                <div class="mt-4 d-flex flex-wrap gap-2">
+                    @if (!autenticado)
+                    {
+                        <a class="btn btn-dorado btn-lg" asp-controller="Auth" asp-action="Registro">
+                            <i class="bi bi-person-plus me-1"></i> Crear cuenta de cliente
+                        </a>
+                        <a class="btn btn-outline-light btn-lg" asp-controller="Auth" asp-action="Login">
+                            <i class="bi bi-box-arrow-in-right me-1"></i> Iniciar sesión
+                        </a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-dorado btn-lg" asp-controller="Reserva" asp-action="Registrar">
+                            <i class="bi bi-plus-circle me-1"></i> Reservar cancha
+                        </a>
+                        <a class="btn btn-outline-light btn-lg" asp-controller="Reserva" asp-action="MisReservas">
+                            <i class="bi bi-calendar-check me-1"></i> Mis Reservas
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="fb-feature-card">
+                <div class="fb-icon-circle"><i class="bi bi-geo-alt"></i></div>
+                <h5>Canchas para todo nivel</h5>
+                <p class="text-muted mb-0">Grass sintético FIFA, canchas estándar, junior y una opción VIP con vestidores exclusivos.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="fb-feature-card">
+                <div class="fb-icon-circle"><i class="bi bi-clock-history"></i></div>
+                <h5>Horarios flexibles</h5>
+                <p class="text-muted mb-0">Bloques de mañana y noche, con validación automática para evitar reservas duplicadas.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="fb-feature-card">
+                <div class="fb-icon-circle"><i class="bi bi-shield-check"></i></div>
+                <h5>Pagos controlados</h5>
+                <p class="text-muted mb-0">Cada reserva queda enlazada a su pago, con estados de confirmación y reembolso.</p>
+            </div>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="fb-feature-card">
-            <div class="fb-icon-circle"><i class="bi bi-shield-check"></i></div>
-            <h5>Pagos controlados</h5>
-            <p class="text-muted mb-0">Cada reserva queda enlazada a su pago, con estados de confirmación y reembolso.</p>
-        </div>
-    </div>
-</div>
+}

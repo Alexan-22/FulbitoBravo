@@ -17,7 +17,7 @@
                 <th>Id</th>
                 <th>Nombre</th>
                 <th>Descripción</th>
-                <th>Estado</th>
+                <th style="width: 180px;">Estado</th>
             </tr>
         </thead>
         <tbody>
@@ -27,7 +27,16 @@
                     <td>@item.IdCancha</td>
                     <td>@item.Nombre</td>
                     <td>@item.Descripcion</td>
-                    <td>@(item.Estado ? "Activo" : "Inactivo")</td>
+                    <td>
+                        <form asp-action="CambiarEstado" method="post" class="d-flex gap-2 align-items-center"
+                              onsubmit="return confirm('¿Está seguro de cambiar el estado de esta cancha?');">
+                            <input type="hidden" name="id" value="@item.IdCancha" />
+                            <select name="estado" class="form-select form-select-sm" onchange="this.form.submit()">
+                                <option value="true" selected="@(item.Estado ? "selected" : null)">Activo</option>
+                                <option value="false" selected="@(!item.Estado ? "selected" : null)">Inactivo</option>
+                            </select>
+                        </form>
+                    </td>
                 </tr>
             }
         </tbody>

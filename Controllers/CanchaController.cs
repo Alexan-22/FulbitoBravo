@@ -28,4 +28,23 @@ public class CanchaController : Controller
         TempData["Mensaje"] = $"Cancha '{modelo.Nombre}' registrada exitosamente.";
         return RedirectToAction("Index");
     }
+
+    [HttpPost]
+public IActionResult CambiarEstado(int id, bool estado)
+    {
+        var resultado = _repo.CambiarEstado(id, estado);
+
+        if (resultado)
+        {
+            TempData["Mensaje"] = estado
+                ? "Cancha activada correctamente."
+                : "Cancha desactivada correctamente.";
+        }
+        else
+        {
+            TempData["Mensaje"] = "No se pudo cambiar el estado de la cancha.";
+        }
+
+        return RedirectToAction("Index");
+    }
 }

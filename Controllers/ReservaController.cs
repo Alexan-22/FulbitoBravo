@@ -72,7 +72,7 @@ public class ReservaController : Controller
         bool esAdmin = User.IsInRole("Admin");
 
         ViewBag.EsAdmin = esAdmin;
-        ViewBag.ListaCanchas = new SelectList(_canchaRepo.Listar(), "IdCancha", "Nombre");
+        ViewBag.ListaCanchas = new SelectList(_canchaRepo.ListarActivas(), "IdCancha", "Nombre");
         ViewBag.ListaHorarios = new SelectList(_horarioRepo.Listar(), "IdHorario", "HoraInicio");
 
         var modelo = new ReservaViewModel();
@@ -107,7 +107,7 @@ public class ReservaController : Controller
         if (!ModelState.IsValid)
         {
             ViewBag.EsAdmin = esAdmin;
-            ViewBag.ListaCanchas = new SelectList(_canchaRepo.Listar(), "IdCancha", "Nombre", modelo.IdCancha);
+            ViewBag.ListaCanchas = new SelectList(_canchaRepo.ListarActivas(), "IdCancha", "Nombre", modelo.IdCancha);
             ViewBag.ListaHorarios = new SelectList(_horarioRepo.Listar(), "IdHorario", "HoraInicio", modelo.IdHorario);
 
             if (esAdmin)

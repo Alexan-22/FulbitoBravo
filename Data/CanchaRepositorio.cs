@@ -47,6 +47,41 @@ public class CanchaRepositorio
         return lista;
     }
 
+    public List<CanchaViewModel> ListarActivas()
+    {
+        var lista = new List<CanchaViewModel>();
+        var cadena = _conexion.ObtenerCadenaSQL();
+
+        using (var cn = new SqlConnection(cadena))
+        {
+            cn.Open();
+
+            string query = @"
+                SELECT IdCancha, Nombre, Descripcion, Estado
+                FROM Cancha
+                WHERE Estado = 1";
+
+            using (var cmd = new SqlCommand(query, cn))
+            {
+                using (var dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        lista.Add(new CanchaViewModel
+                        {
+                            IdCancha = Convert.ToInt32(dr["IdCancha"]),
+                            Nombre = dr["Nombre"].ToString() ?? "",
+                            Descripcion = dr["Descripcion"]?.ToString(),
+                            Estado = Convert.ToBoolean(dr["Estado"])
+                        });
+                    }
+                }
+            }
+        }
+
+        return lista;
+    }
+
     // GET - Obtener una cancha por ID
     public CanchaViewModel? ObtenerPorId(int id)
     {
@@ -160,6 +195,30 @@ public class CanchaRepositorio
             using (var cmd = new SqlCommand(query, cn))
             {
                 cmd.Parameters.AddWithValue("@IdCancha", id);
+
+                return cmd.ExecuteNonQuery() > 0;
+            }
+        }
+    }
+
+    // Cambiar estado de cancha
+    public bool CambiarEstado(int idCancha, bool estado)
+    {
+        var cadena = _conexion.ObtenerCadenaSQL();
+
+        using (var cn = new SqlConnection(cadena))
+        {
+            cn.Open();
+
+            string query = @"
+                UPDATE Cancha
+                SET Estado = @Estado
+                WHERE IdCancha = @IdCancha";
+
+            using (var cmd = new SqlCommand(query, cn))
+            {
+                cmd.Parameters.AddWithValue("@IdCancha", idCancha);
+                cmd.Parameters.AddWithValue("@Estado", estado);
 
                 return cmd.ExecuteNonQuery() > 0;
             }
