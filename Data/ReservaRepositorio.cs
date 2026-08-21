@@ -179,83 +179,32 @@ public class ReservaRepositorio
             cn.Open();
 
             string query = @"
-                SELECT
-                    r.IdReserva,
-                    r.IdCliente,
+                SELECT r.IdReserva, r.IdCliente, r.IdCancha, r.FechaReserva, r.IdHorario, r.EstadoReserva,
                     c.Nombre + ' ' + c.Apellido AS NombreCliente,
-                    r.IdCancha,
-                    ca.Nombre AS NombreCancha,
-                    r.FechaReserva,
-                    r.IdHorario,
-                    h.HoraInicio,
-                    h.HoraFin,
-                    r.EstadoReserva
+                    ca.Nombre AS NombreCancha
                 FROM Reserva r
-                INNER JOIN Cliente c
-                    ON r.IdCliente = c.IdCliente
-                INNER JOIN Cancha ca
-                    ON r.IdCancha = ca.IdCancha
-                INNER JOIN Horario h
-                    ON r.IdHorario = h.IdHorario
+                INNER JOIN Cliente c ON r.IdCliente = c.IdCliente
+                INNER JOIN Cancha ca ON r.IdCancha = ca.IdCancha
                 WHERE r.IdReserva = @IdReserva";
 
             using (var cmd = new SqlCommand(query, cn))
             {
-                cmd.Parameters.AddWithValue(
-                    "@IdReserva",
-                    id
-                );
+                cmd.Parameters.AddWithValue("@IdReserva", id);
 
                 using (var dr = cmd.ExecuteReader())
                 {
                     if (dr.Read())
                     {
-                        var horaInicio =
-                            dr["HoraInicio"] != DBNull.Value
-                                ? ((TimeSpan)dr["HoraInicio"])
-                                    .ToString(@"hh\:mm")
-                                : "";
-
-                        var horaFin =
-                            dr["HoraFin"] != DBNull.Value
-                                ? ((TimeSpan)dr["HoraFin"])
-                                    .ToString(@"hh\:mm")
-                                : "";
-
                         return new ReservaViewModel
                         {
-                            IdReserva =
-                                Convert.ToInt32(
-                                    dr["IdReserva"]),
-
-                            IdCliente =
-                                Convert.ToInt32(
-                                    dr["IdCliente"]),
-
-                            NombreCliente =
-                                dr["NombreCliente"]?.ToString(),
-
-                            IdCancha =
-                                Convert.ToInt32(
-                                    dr["IdCancha"]),
-
-                            NombreCancha =
-                                dr["NombreCancha"]?.ToString(),
-
-                            FechaReserva =
-                                Convert.ToDateTime(
-                                    dr["FechaReserva"]),
-
-                            IdHorario =
-                                Convert.ToInt32(
-                                    dr["IdHorario"]),
-
-                            HorarioTexto =
-                                $"{horaInicio} - {horaFin}",
-
-                            EstadoReserva =
-                                dr["EstadoReserva"]?.ToString()
-                                ?? "Confirmada"
+                            IdReserva = Convert.ToInt32(dr["IdReserva"]),
+                            IdCliente = Convert.ToInt32(dr["IdCliente"]),
+                            IdCancha = Convert.ToInt32(dr["IdCancha"]),
+                            FechaReserva = Convert.ToDateTime(dr["FechaReserva"]),
+                            IdHorario = Convert.ToInt32(dr["IdHorario"]),
+                            EstadoReserva = dr["EstadoReserva"].ToString() ?? "Confirmada",
+                            NombreCliente = dr["NombreCliente"]?.ToString(),
+                            NombreCancha = dr["NombreCancha"]?.ToString()
                         };
                     }
                 }
@@ -263,6 +212,29 @@ public class ReservaRepositorio
         }
 
         return null;
+    }
+
+    public bool ActualizarEstado(int idReserva, string estado)
+    {
+        var cadena = _conexion.ObtenerCadenaSQL();
+
+        using (var cn = new SqlConnection(cadena))
+        {
+            cn.Open();
+
+            string query = @"
+                UPDATE Reserva
+                SET EstadoReserva = @Estado
+                WHERE IdReserva = @IdReserva";
+
+            using (var cmd = new SqlCommand(query, cn))
+            {
+                cmd.Parameters.AddWithValue("@IdReserva", idReserva);
+                cmd.Parameters.AddWithValue("@Estado", estado);
+
+                return cmd.ExecuteNonQuery() > 0;
+            }
+        }
     }
 
     public void Insertar(ReservaViewModel modelo)
@@ -400,5 +372,87 @@ public class ReservaRepositorio
                 return cmd.ExecuteNonQuery() > 0;
             }
         }
+    }
+
+    // Verificar reserva activa
+    public bool ExisteReservaActiva(int idCancha, DateTime fecha, int idHorario, int? excluirIdReserva = null)
+    {
+        var cadena = _conexion.ObtenerCadenaSQL();
+
+        using (var cn = new SqlConnection(cadena))
+        {
+            cn.Open();
+
+            string query = @"
+                SELECT COUNT(1)
+                FROM Reserva
+                WHERE IdCancha = @IdCancha
+                AND FechaReserva = @Fecha
+                AND IdHorario = @IdHorario
+                AND EstadoReserva IN ('Confirmada', 'En curso')";
+
+            if (excluirIdReserva.HasValue)
+            {
+                query += " AND IdReserva <> @IdReserva";
+            }
+
+            using (var cmd = new SqlCommand(query, cn))
+            {
+                cmd.Parameters.AddWithValue("@IdCancha", idCancha);
+                cmd.Parameters.AddWithValue("@Fecha", fecha.Date);
+                cmd.Parameters.AddWithValue("@IdHorario", idHorario);
+
+                if (excluirIdReserva.HasValue)
+                {
+                    cmd.Parameters.AddWithValue("@IdReserva", excluirIdReserva.Value);
+                }
+
+                return Convert.ToInt32(cmd.ExecuteScalar()) > 0;
+            }
+        }
+    }
+
+    // Listar solo reservas pendientes de pago
+    public List<ReservaViewModel> ListarPendientesDePago()
+    {
+        var lista = new List<ReservaViewModel>();
+        var cadena = _conexion.ObtenerCadenaSQL();
+
+        using (var cn = new SqlConnection(cadena))
+        {
+            cn.Open();
+
+            string query = @"
+                SELECT r.IdReserva, r.IdCliente, r.IdCancha, r.FechaReserva, r.IdHorario, r.EstadoReserva
+                FROM Reserva r
+                WHERE r.EstadoReserva IN ('Confirmada', 'En curso')
+                AND NOT EXISTS (
+                    SELECT 1 FROM Pago p
+                    WHERE p.IdReserva = r.IdReserva
+                        AND p.EstadoPago = 'Pagado'
+                )
+                ORDER BY r.IdReserva DESC";
+
+            using (var cmd = new SqlCommand(query, cn))
+            {
+                using (var dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        lista.Add(new ReservaViewModel
+                        {
+                            IdReserva = Convert.ToInt32(dr["IdReserva"]),
+                            IdCliente = Convert.ToInt32(dr["IdCliente"]),
+                            IdCancha = Convert.ToInt32(dr["IdCancha"]),
+                            FechaReserva = Convert.ToDateTime(dr["FechaReserva"]),
+                            IdHorario = Convert.ToInt32(dr["IdHorario"]),
+                            EstadoReserva = dr["EstadoReserva"].ToString() ?? "Confirmada"
+                        });
+                    }
+                }
+            }
+        }
+
+        return lista;
     }
 }

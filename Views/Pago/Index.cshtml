@@ -7,6 +7,17 @@
 <div class="page-card">
     <h2><i class="bi bi-credit-card me-2"></i>Listado de Pagos</h2>
 
+    <div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm bg-success text-white">
+            <div class="card-body">
+                <div class="text-white-50 small">Total recaudado</div>
+                <div class="fs-3 fw-bold">S/ @(((decimal)ViewBag.TotalRecaudado).ToString("N2"))</div>
+            </div>
+        </div>
+    </div>
+    </div>
+
     <div class="mb-3">
         <a asp-action="Registrar" class="btn btn-success">Nuevo Pago</a>
     </div>

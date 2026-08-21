@@ -41,7 +41,7 @@
 
                 <div class="mb-3">
                     <label asp-for="FechaReserva" class="form-label"></label>
-                    <input asp-for="FechaReserva" class="form-control" type="date" />
+                    <input asp-for="FechaReserva" type="date" class="form-control" min="@DateTime.Today.ToString("yyyy-MM-dd")" />
                     <span asp-validation-for="FechaReserva" class="text-danger"></span>
                 </div>
 
@@ -56,9 +56,7 @@
                 @if (ViewBag.EsAdmin == true)
                 {
                     <div class="mb-3">
-                        <label asp-for="EstadoReserva" class="form-label"></label>
-                        <input asp-for="EstadoReserva" class="form-control" value="Confirmada" />
-                        <span asp-validation-for="EstadoReserva" class="text-danger"></span>
+                        <input type="hidden" asp-for="EstadoReserva" value="Confirmada" />
                     </div>
                 }
                 else

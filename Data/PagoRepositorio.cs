@@ -175,4 +175,25 @@ public class PagoRepositorio
             }
         }
     }
+
+    // Total recaudado
+    public decimal ObtenerTotalRecaudado()
+    {
+        var cadena = _conexion.ObtenerCadenaSQL();
+
+        using (var cn = new SqlConnection(cadena))
+        {
+            cn.Open();
+
+            string query = @"
+                SELECT ISNULL(SUM(Monto), 0)
+                FROM Pago
+                WHERE EstadoPago = 'Pagado'";
+
+            using (var cmd = new SqlCommand(query, cn))
+            {
+                return Convert.ToDecimal(cmd.ExecuteScalar());
+            }
+        }
+    }
 }

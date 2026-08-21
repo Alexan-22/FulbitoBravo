@@ -75,7 +75,10 @@ public class ReservaController : Controller
         ViewBag.ListaCanchas = new SelectList(_canchaRepo.ListarActivas(), "IdCancha", "Nombre");
         ViewBag.ListaHorarios = new SelectList(_horarioRepo.Listar(), "IdHorario", "HoraInicio");
 
-        var modelo = new ReservaViewModel();
+        var modelo = new ReservaViewModel
+        {
+            FechaReserva = DateTime.Today
+        };
 
         if (esAdmin)
         {
@@ -103,7 +106,14 @@ public class ReservaController : Controller
 
             modelo.IdCliente = IdClienteActual.Value;
         }
-
+        if (modelo.FechaReserva.Date < DateTime.Today)
+        {
+            ModelState.AddModelError("FechaReserva", "La fecha de la reserva no puede ser anterior a hoy.");
+        }
+        if (_reservaRepo.ExisteReservaActiva(modelo.IdCancha, modelo.FechaReserva, modelo.IdHorario))
+        {
+            ModelState.AddModelError("", "Ya existe una reserva confirmada o en curso para esa cancha, fecha y horario. Por favor, elegir otra.");
+        }
         if (!ModelState.IsValid)
         {
             ViewBag.EsAdmin = esAdmin;
@@ -122,6 +132,52 @@ public class ReservaController : Controller
         return esAdmin
             ? RedirectToAction("Index")
             : RedirectToAction("MisReservas");
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpGet]
+    public IActionResult EditarEstado(int id)
+    {
+        var reserva = _reservaRepo.ObtenerPorId(id);
+
+        if (reserva == null)
+            return NotFound();
+
+        // Solo se pueden editar reservas de hoy o futuras
+        if (reserva.FechaReserva.Date < DateTime.Today)
+        {
+            TempData["Mensaje"] = "No se puede editar una reserva de una fecha pasada.";
+            return RedirectToAction("Index");
+        }
+
+        return View(reserva);
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult EditarEstado(int id, string estadoReserva)
+    {
+        var reserva = _reservaRepo.ObtenerPorId(id);
+
+        if (reserva == null)
+            return NotFound();
+
+        if (reserva.FechaReserva.Date < DateTime.Today)
+        {
+            TempData["Mensaje"] = "No se puede editar una reserva de una fecha pasada.";
+            return RedirectToAction("Index");
+        }
+
+        if (string.IsNullOrWhiteSpace(estadoReserva))
+        {
+            ModelState.AddModelError("", "Debe seleccionar un estado.");
+            return View(reserva);
+        }
+
+        _reservaRepo.ActualizarEstado(id, estadoReserva);
+        TempData["Mensaje"] = "Estado de la reserva actualizado correctamente.";
+        return RedirectToAction("Index");
     }
     
     // ========== REPORTE POR RANGO DE FECHAS (solo Admin) ==========

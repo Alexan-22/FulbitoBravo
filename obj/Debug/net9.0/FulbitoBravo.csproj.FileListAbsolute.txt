@@ -66,7 +66,6 @@ E:\MELL ARCHIVOS\cibertec\modulo 5.2\desarrollo de servicios web i\proyecto\FINA
 E:\MELL ARCHIVOS\cibertec\modulo 5.2\desarrollo de servicios web i\proyecto\FINAL\FINAL\FulbitoBravo\obj\Debug\net9.0\scopedcss\bundle\FulbitoBravo.styles.css
 E:\MELL ARCHIVOS\cibertec\modulo 5.2\desarrollo de servicios web i\proyecto\FINAL\FINAL\FulbitoBravo\obj\Debug\net9.0\scopedcss\projectbundle\FulbitoBravo.bundle.scp.css
 E:\MELL ARCHIVOS\cibertec\modulo 5.2\desarrollo de servicios web i\proyecto\FINAL\FINAL\FulbitoBravo\obj\Debug\net9.0\compressed\85uvzrfu6t-x7y39ebfnf.gz
-E:\MELL ARCHIVOS\cibertec\modulo 5.2\desarrollo de servicios web i\proyecto\FINAL\FINAL\FulbitoBravo\obj\Debug\net9.0\compressed\njph5p7bhv-61n19gt1b8.gz
 E:\MELL ARCHIVOS\cibertec\modulo 5.2\desarrollo de servicios web i\proyecto\FINAL\FINAL\FulbitoBravo\obj\Debug\net9.0\compressed\4nka7dtq3f-xtxxf3hu2r.gz
 E:\MELL ARCHIVOS\cibertec\modulo 5.2\desarrollo de servicios web i\proyecto\FINAL\FINAL\FulbitoBravo\obj\Debug\net9.0\compressed\akscr2l371-t1cqhe9u97.gz
 E:\MELL ARCHIVOS\cibertec\modulo 5.2\desarrollo de servicios web i\proyecto\FINAL\FINAL\FulbitoBravo\obj\Debug\net9.0\compressed\tp7tre19kb-c2jlpeoesf.gz
@@ -139,3 +138,5 @@ E:\MELL ARCHIVOS\cibertec\modulo 5.2\desarrollo de servicios web i\proyecto\FINA
 E:\MELL ARCHIVOS\cibertec\modulo 5.2\desarrollo de servicios web i\proyecto\FINAL\FINAL\FulbitoBravo\obj\Debug\net9.0\FulbitoBravo.pdb
 E:\MELL ARCHIVOS\cibertec\modulo 5.2\desarrollo de servicios web i\proyecto\FINAL\FINAL\FulbitoBravo\obj\Debug\net9.0\FulbitoBravo.genruntimeconfig.cache
 E:\MELL ARCHIVOS\cibertec\modulo 5.2\desarrollo de servicios web i\proyecto\FINAL\FINAL\FulbitoBravo\obj\Debug\net9.0\ref\FulbitoBravo.dll
+E:\MELL ARCHIVOS\cibertec\modulo 5.2\desarrollo de servicios web i\proyecto\FINAL\FINAL\FulbitoBravo\obj\Debug\net9.0\compressed\njph5p7bhv-04n33i0tx5.gz
+E:\MELL ARCHIVOS\cibertec\modulo 5.2\desarrollo de servicios web i\proyecto\FINAL\FINAL\FulbitoBravo\obj\Debug\net9.0\compressed\0dm3qkgp79-6sx6pifph3.gz

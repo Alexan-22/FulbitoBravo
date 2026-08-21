@@ -1,0 +1,46 @@
+@model FulbitoBravo.Models.ReservaViewModel
+
+@{
+    ViewData["Title"] = "Editar estado de reserva";
+}
+
+<div class="page-card">
+    <h2><i class="bi bi-pencil-square me-2"></i>Editar estado de reserva</h2>
+    <hr />
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="form-label">Cliente</label>
+                <input class="form-control" value="@Model.NombreCliente" readonly />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Cancha</label>
+                <input class="form-control" value="@Model.NombreCancha" readonly />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Fecha</label>
+                <input class="form-control" value="@Model.FechaReserva.ToString("dd/MM/yyyy")" readonly />
+            </div>
+
+            <form asp-action="EditarEstado" method="post">
+                <input type="hidden" name="id" value="@Model.IdReserva" />
+                @Html.AntiForgeryToken()
+
+                <div class="mb-3">
+                    <label class="form-label">Estado</label>
+                    <select name="estadoReserva" class="form-select">
+                        <option value="Confirmada">Confirmada</option>
+                        <option value="En curso">En curso</option>
+                        <option value="Cancelada">Cancelada</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Guardar</button>
+                <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+            </form>
+        </div>
+    </div>
+</div>

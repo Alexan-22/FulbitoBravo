@@ -25,6 +25,7 @@
                 <th>Fecha</th>
                 <th>Horario</th>
                 <th>Estado</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
@@ -46,6 +47,18 @@
                             else
                             {
                                 <span class="badge bg-secondary">@item.EstadoReserva</span>
+                            }
+                        </td>
+                        <td>
+                            @if (item.FechaReserva.Date >= DateTime.Today)
+                            {
+                                <a asp-action="EditarEstado" asp-route-id="@item.IdReserva" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-pencil"></i> Estado
+                                </a>
+                            }
+                            else
+                            {
+                                <span class="text-muted small">—</span>
                             }
                         </td>
                     </tr>

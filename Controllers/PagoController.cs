@@ -20,13 +20,14 @@ public class PagoController : Controller
     public IActionResult Index()
     {
         var pagos = _pagoRepo.Listar();
+        ViewBag.TotalRecaudado = _pagoRepo.ObtenerTotalRecaudado();
         return View(pagos);
     }
 
     [HttpGet]
     public IActionResult Registrar()
     {
-        ViewBag.ListaReservas = new SelectList(_reservaRepo.Listar(), "IdReserva", "IdReserva");
+        ViewBag.ListaReservas = new SelectList(_reservaRepo.ListarPendientesDePago(), "IdReserva", "IdReserva");
         return View();
     }
 
@@ -35,7 +36,7 @@ public class PagoController : Controller
     {
         if (!ModelState.IsValid)
         {
-            ViewBag.ListaReservas = new SelectList(_reservaRepo.Listar(), "IdReserva", "IdReserva", modelo.IdReserva);
+            ViewBag.ListaReservas = new SelectList(_reservaRepo.ListarPendientesDePago(), "IdReserva", "IdReserva", modelo.IdReserva);
             return View(modelo);
         }
 
